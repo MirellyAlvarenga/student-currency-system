@@ -8,6 +8,7 @@ import CommonCard from "../../../components/commonCard";
 import { student as studentMock } from "../../../utils/mockData";
 import { Coins, List } from "lucide-react";
 import { format } from "date-fns";
+import Header from "@/components/Header";
 
 export default function StudentDashboard() {
   const [student, setStudent] = useState(() => ({
