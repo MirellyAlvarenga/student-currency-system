@@ -7,13 +7,14 @@ export type Transaction = {
   amount: number;
 };
 
-export type Notification = {
-  id: string;
-  from: string;
-  amount: number;
-  date: string;
-  read?: boolean;
-};
+export interface Notification {
+  id: number;
+  sender: string;        // remetente
+  type: "GAIN" | "SPEND"; // tipo de transação
+  amount: number;        // quantidade de moedas
+  date: string;          // data em ISO ou string
+}
+
 
 export const student = {
   name: "Mariana Silva",

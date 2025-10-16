@@ -1,18 +1,24 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
-import { fadeUp, staggerContainer } from "../../components/motionVariants";
+import Link from "next/link";
+import { fadeUp, staggerContainer } from "../../../components/motionVariants";
 import { motion } from "framer-motion";
-import CommonCard from "../../components/commonCard";
-import { student as studentMock } from "../../utils/mockData";
-import { Coins, List, FileText } from "lucide-react";
+import CommonCard from "../../../components/commonCard";
+import { student as studentMock } from "../../../utils/mockData";
+import { Coins, List } from "lucide-react";
 import { format } from "date-fns";
 
 export default function StudentDashboard() {
-  const [student, setStudent] = useState(() => ({ name: "", balance: 0, summary: { last7DaysGained: 0, exchanges: 0 }, transactions: [] as any[] }));
+  const [student, setStudent] = useState(() => ({
+    name: "",
+    balance: 0,
+    summary: { last7DaysGained: 0, exchanges: 0 },
+    transactions: [] as any[],
+  }));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // simula fetch
     const t = setTimeout(() => {
       setStudent(studentMock);
       setLoading(false);
@@ -21,17 +27,28 @@ export default function StudentDashboard() {
   }, []);
 
   return (
-    <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="space-y-6 p-6 max-w-6xl mx-auto">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+      className="space-y-6 p-6 max-w-6xl mx-auto"
+    >
+      {/* Header */}
       <motion.header variants={fadeUp} className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Olá, {loading ? "..." : student.name}</h1>
           <p className="text-sm text-gray-500">Bem-vindo ao seu painel de moedas</p>
         </div>
         <div className="flex items-center gap-4">
-          <button className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:scale-[1.02] transition-all">Consultar extrato</button>
+          <Link href="/Aluno/ConsultarExtrato">
+            <button className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:scale-[1.02] transition-all">
+              Consultar extrato
+            </button>
+          </Link>
         </div>
       </motion.header>
 
+      {/* Cards */}
       <motion.section variants={fadeUp} className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <CommonCard title="Saldo de Moedas" subtitle="Valor disponível para trocas">
           <div className="flex items-center gap-6">
@@ -45,7 +62,11 @@ export default function StudentDashboard() {
               </div>
             </div>
             <div className="ml-auto">
-              <button className="px-4 py-2 rounded-lg bg-emerald-500 text-white hover:scale-[1.02] transition-all">Trocar por vantagem</button>
+              <Link href="/Aluno/TrocarMoedas">
+                <button className="px-4 py-2 rounded-lg bg-emerald-500 text-white hover:scale-[1.02] transition-all">
+                  Trocar por vantagem
+                </button>
+              </Link>
             </div>
           </div>
         </CommonCard>
@@ -62,17 +83,23 @@ export default function StudentDashboard() {
                 <div className="font-semibold">{loading ? "..." : student.summary.exchanges}</div>
               </div>
             </div>
-
             <div className="mt-2 bg-gray-50 p-3 rounded-lg">
-              {/* gráfico simplificado (barra) */}
               <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full rounded-full bg-blue-500" style={{ width: loading ? "0%" : `${Math.min(100, (student.summary.last7DaysGained / 150) * 100)}%` }} />
+                <div
+                  className="h-full rounded-full bg-blue-500"
+                  style={{
+                    width: loading
+                      ? "0%"
+                      : `${Math.min(100, (student.summary.last7DaysGained / 150) * 100)}%`,
+                  }}
+                />
               </div>
             </div>
           </div>
         </CommonCard>
       </motion.section>
 
+      {/* Transações recentes */}
       <motion.section variants={fadeUp}>
         <CommonCard title="Transações recentes" actions={<div className="text-sm text-gray-500">Últimas 8</div>}>
           <div className="mt-3 space-y-2">
@@ -90,7 +117,11 @@ export default function StudentDashboard() {
                       <div className="text-xs text-gray-500">{format(new Date(t.date), "dd/MM/yyyy HH:mm")}</div>
                     </div>
                   </div>
-                  <div className={`font-semibold ${t.type === "GAIN" ? "text-emerald-600" : "text-rose-500"}`}>{t.type === "GAIN" ? `+${t.amount}` : `-${t.amount}`}</div>
+                  <div
+                    className={`font-semibold ${t.type === "GAIN" ? "text-emerald-600" : "text-rose-500"}`}
+                  >
+                    {t.type === "GAIN" ? `+${t.amount}` : `-${t.amount}`}
+                  </div>
                 </div>
               ))
             )}

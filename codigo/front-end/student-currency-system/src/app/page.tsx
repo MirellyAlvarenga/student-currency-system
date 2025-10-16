@@ -1,7 +1,7 @@
 
-import DashboardALuno from "../../src/app/Aluno/dashboard";
-export default function Home() {
-  return (
-   <DashboardALuno />
-  );
+"use client";
+import StudentDashboard from "./Aluno/Dashboard/page";
+
+export default function Page() {
+  return <StudentDashboard />;
 }
