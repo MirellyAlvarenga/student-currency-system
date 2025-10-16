@@ -52,22 +52,25 @@ const CreateStudentPage = () => {
             <thead>
               <tr style={{ backgroundColor: "#f0f0f0" }}>
                 <th style={{ border: "1px solid #ccc", padding: "8px" }}>
-                  Placa
+                  Nome
                 </th>
                 <th style={{ border: "1px solid #ccc", padding: "8px" }}>
-                  Registro
+                  CPF
                 </th>
                 <th style={{ border: "1px solid #ccc", padding: "8px" }}>
-                  Ano
+                  RG
                 </th>
                 <th style={{ border: "1px solid #ccc", padding: "8px" }}>
-                  Marca
+                  Endereço
                 </th>
                 <th style={{ border: "1px solid #ccc", padding: "8px" }}>
-                  Modelo
+                  Curso
                 </th>
                 <th style={{ border: "1px solid #ccc", padding: "8px" }}>
-                  Ações
+                  Moedas
+                </th>
+                <th style={{ border: "1px solid #ccc", padding: "8px" }}>
+                  Instituição
                 </th>
               </tr>
             </thead>
