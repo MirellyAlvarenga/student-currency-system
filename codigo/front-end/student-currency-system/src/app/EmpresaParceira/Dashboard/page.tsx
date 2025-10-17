@@ -6,14 +6,24 @@ import CommonCard from "../../../components/commonCard";
 import { partner as partnerMock } from "../../../utils/mockData";
 import { fadeUp, staggerContainer } from "../../../components/motionVariants";
 import { motion } from "framer-motion";
+import { Bell, Gift, Repeat } from "lucide-react";
+import { format } from "date-fns";
 
 export default function PartnerDashboard() {
   const [partner, setPartner] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => {
-      setPartner(partnerMock);
+      setPartner({
+        ...partnerMock,
+        notifications: [
+          { id: 1, message: "Nova troca confirmada: João Silva", date: "2025-10-14T10:30" },
+          { id: 2, message: "Você recebeu uma nova avaliação positiva.", date: "2025-10-15T12:15" },
+          { id: 3, message: "Vantagem 'Desconto 10%' foi resgatada.", date: "2025-10-15T15:00" },
+        ],
+      });
       setLoading(false);
     }, 380);
     return () => clearTimeout(t);
@@ -24,52 +34,106 @@ export default function PartnerDashboard() {
       initial="hidden"
       animate="visible"
       variants={staggerContainer}
-      className="p-6 max-w-6xl mx-auto space-y-6"
+      className="p-6 max-w-6xl mx-auto space-y-6 relative"
     >
-      <motion.header
-        variants={fadeUp}
-        className="flex items-center justify-between"
-      >
+      {/* Header */}
+      <motion.header variants={fadeUp} className="flex items-center justify-between relative">
         <div>
-          <h1 className="text-3xl font-bold">
-            {loading ? "..." : partner?.name}
-          </h1>
+          <h1 className="text-3xl font-bold">{loading ? "..." : partner?.name}</h1>
           <p className="text-sm text-gray-500">Painel da empresa parceira</p>
         </div>
 
-        {/* 🔗 Botões de navegação */}
-        <div className="flex gap-3">
-          <Link href="/EmpresaParceira/CadastrarVantagem">
-            <button className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition">
-              Cadastrar Vantagem
+        <div className="flex items-center gap-4 relative">
+          {/* Notificações */}
+          <div className="relative">
+            <button
+              onClick={() => setShowNotifications((prev) => !prev)}
+              className="relative p-2 rounded-full hover:bg-gray-100 transition"
+            >
+              <Bell size={22} />
+              {partner?.notifications?.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  {partner.notifications.length}
+                </span>
+              )}
             </button>
-          </Link>
 
-          <Link href="/EmpresaParceira/ConsultarTrocas">
-            <button className="px-4 py-2 rounded-lg bg-white border hover:bg-gray-100 transition">
-              Consultar Trocas
-            </button>
+            {showNotifications && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                className="absolute right-0 mt-2 w-80 bg-white border rounded-xl shadow-lg z-50 overflow-hidden"
+              >
+                <div className="p-3 border-b font-semibold">Notificações</div>
+                <div className="max-h-60 overflow-y-auto divide-y">
+                  {partner?.notifications.map((n: any) => (
+                    <div key={n.id} className="p-3 text-sm hover:bg-gray-50">
+                      <div>{n.message}</div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {format(new Date(n.date), "dd/MM/yyyy HH:mm")}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="text-center text-xs text-gray-500 py-2 bg-gray-50 cursor-pointer hover:text-blue-600">
+                  Ver todas
+                </div>
+              </motion.div>
+            )}
+          </div>
+
+          {/* Botão Cadastrar Vantagem */}
+          <Link href="/EmpresaParceira/CadastrarVantagem" className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition">
+            Cadastrar Vantagem
           </Link>
         </div>
       </motion.header>
 
-      <motion.section
-        variants={fadeUp}
-        className="grid grid-cols-1 md:grid-cols-2 gap-6"
-      >
+      {/* Cards principais */}
+      <motion.section variants={fadeUp} className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <CommonCard title="Vantagens cadastradas" subtitle="Total de ofertas">
-          <div className="text-4xl font-semibold">
-            {loading ? "..." : partner?.rewardsCount}
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3">
+              <div className="p-4 rounded-xl bg-gray-100">
+                <Gift size={38} />
+              </div>
+              <div className="text-4xl font-semibold">{loading ? "..." : partner?.rewardsCount}</div>
+            </div>
+
+            <div className="ml-auto">
+              <Link
+                href="/EmpresaParceira/VerSuasVantagens"
+                className="px-4 py-2 rounded-lg bg-emerald-500 text-white hover:scale-[1.02] transition-all flex items-center gap-2"
+              >
+                <Gift size={18} /> Ver Suas Vantagens
+              </Link>
+            </div>
           </div>
         </CommonCard>
 
         <CommonCard title="Trocas realizadas" subtitle="Total histórico">
-          <div className="text-4xl font-semibold">
-            {loading ? "..." : partner?.totalExchanges}
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3">
+              <div className="p-4 rounded-xl bg-gray-100">
+                <Repeat size={38} />
+              </div>
+              <div className="text-4xl font-semibold">{loading ? "..." : partner?.totalExchanges}</div>
+            </div>
+
+            <div className="ml-auto">
+              <Link
+                href="/EmpresaParceira/ConsultarTrocas"
+                className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:scale-[1.02] transition-all flex items-center gap-2"
+              >
+                <Repeat size={18} /> Consultar Trocas
+              </Link>
+            </div>
           </div>
         </CommonCard>
       </motion.section>
 
+      {/* Últimas trocas */}
       <motion.section variants={fadeUp} className="grid grid-cols-1 gap-6">
         <CommonCard title="Visão rápida" subtitle="Últimas trocas">
           <div className="divide-y mt-2">
@@ -77,18 +141,12 @@ export default function PartnerDashboard() {
               <div className="text-sm text-gray-500">Carregando...</div>
             ) : (
               partner.exchangesRecent.map((e: any) => (
-                <div
-                  key={e.id}
-                  className="py-3 flex items-center justify-between"
-                >
+                <div key={e.id} className="py-3 flex items-center justify-between">
                   <div>
                     <div className="font-medium">
-                      {e.student} —{" "}
-                      <span className="text-gray-500">{e.reward}</span>
+                      {e.student} — <span className="text-gray-500">{e.reward}</span>
                     </div>
-                    <div className="text-xs text-gray-500">
-                      {new Date(e.date).toLocaleString()}
-                    </div>
+                    <div className="text-xs text-gray-500">{new Date(e.date).toLocaleString()}</div>
                   </div>
                   <div>
                     <span
