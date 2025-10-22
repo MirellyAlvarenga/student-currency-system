@@ -9,7 +9,7 @@ export type StudentDTO = {
     email: string,
     cpf: string,
     rg: string,
-    addres: string,
+    address: string,
     course: string,
     coins: number,
     instituition: InstituitionDTO,
