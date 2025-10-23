@@ -2,6 +2,7 @@ package student.currency.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import student.currency.models.Company;
@@ -17,6 +18,9 @@ public class CompanyController {
     @Autowired
     private CompanyService companyService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping
     public List<Company> getAllCompanies() {
         return companyService.findAll();
@@ -31,6 +35,7 @@ public class CompanyController {
 
     @PostMapping
     public Company createCompany(@RequestBody Company company) {
+        company.setPassword(passwordEncoder.encode(company.getPassword()));
         return companyService.save(company);
     }
 

@@ -2,6 +2,7 @@ package student.currency.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import student.currency.models.Student;
@@ -17,6 +18,9 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping
     public List<Student> getAllStudents() {
         return studentService.findAll();
@@ -31,6 +35,7 @@ public class StudentController {
 
     @PostMapping
     public Student createStudent(@RequestBody Student student) {
+        student.setPassword(passwordEncoder.encode(student.getPassword()));
         return studentService.save(student);
     }
 

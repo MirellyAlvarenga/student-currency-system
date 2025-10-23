@@ -43,4 +43,7 @@ public class Student {
   @JoinColumn(name = "instituition_id", nullable = false)
   private Instituition instituition;
 
+  @Column(nullable = false)
+  private String role = "STUDENT";
+
 }
