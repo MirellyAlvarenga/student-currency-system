@@ -26,7 +26,7 @@ export default function Header() {
       }}
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link href="/EmpresaParceira/dashboard" className="text-2xl font-bold">
+        <Link href="/Aluno/Dashboard" className="text-2xl font-bold">
           Sistema monetário
         </Link>
 

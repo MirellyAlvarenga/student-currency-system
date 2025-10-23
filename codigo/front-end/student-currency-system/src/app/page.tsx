@@ -1,9 +1,9 @@
 
 "use client";
-import StudentDashboard from "./Aluno/Dashboard/page";
+import LoginPage from "./Login/page";
 
 export default function Page() {
   return (
-  <StudentDashboard />
+  <LoginPage />
 )
 }

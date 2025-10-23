@@ -3,13 +3,12 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import api from "@/services/api";
-import { Poppins } from "next/font/google";
-import Header from "@/components/Header";
-
-const poppins = Poppins({
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
-});
+import Header from "@/components/HeaderALuno";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface StudentForm {
   login: string;
@@ -56,7 +55,7 @@ export default function EditStudentPage() {
   }, [id]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({
@@ -80,139 +79,100 @@ export default function EditStudentPage() {
   return (
     <>
       <Header />
-      <div
-        className={poppins.className}
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-          backgroundColor: "#d3d3d3",
-          padding: "2rem",
-        }}
-      >
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            backgroundColor: "white",
-            padding: "2rem",
-            borderRadius: "10px",
-            width: "600px",
-            boxShadow: "0 0 15px rgba(0,0,0,0.3)",
-          }}
-        >
-          <h2
-            style={{
-              textAlign: "center",
-              marginBottom: "1rem",
-              color: "#003366",
-            }}
-          >
-            Editar Aluno
-          </h2>
+      <div className="p-6 max-w-4xl mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl font-semibold text-gray-800 text-center">
+              Editar Aluno
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          {[
-            "login",
-            "password",
-            "name",
-            "email",
-            "cpf",
-            "rg",
-            "address",
-            "course",
-          ].map((field) => (
-            <input
-              key={field}
-              type={field === "password" ? "password" : "text"}
-              name={field}
-              placeholder={
-                field.charAt(0).toUpperCase() + field.slice(1)
-              }
-              value={(form as any)[field]}
-              onChange={handleChange}
-              style={{
-                width: "100%",
-                padding: "10px",
-                marginBottom: "1rem",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-              }}
-              required
-            />
-          ))}
+                {/* Campos de texto */}
+                {["login", "password", "name", "email", "cpf", "rg", "address", "course"].map((field) => (
+                  <div key={field}>
+                    <Label htmlFor={field} className="block mb-1 capitalize">
+                      {field}
+                    </Label>
+                    <Input
+                      id={field}
+                      name={field}
+                      type={field === "password" ? "password" : "text"}
+                      value={(form as any)[field]}
+                      onChange={handleChange}
+                      required
+                      className="w-full"
+                    />
+                  </div>
+                ))}
 
-          <input
-            type="number"
-            name="coins"
-            placeholder="Moedas"
-            value={form.coins}
-            onChange={handleChange}
-            style={{
-              width: "100%",
-              padding: "10px",
-              marginBottom: "1rem",
-              borderRadius: "5px",
-              border: "1px solid #ccc",
-            }}
-            min={0}
-          />
+                {/* Moedas */}
+                <div>
+                  <Label htmlFor="coins" className="block mb-1">
+                    Moedas
+                  </Label>
+                  <Input
+                    id="coins"
+                    name="coins"
+                    type="number"
+                    min={0}
+                    value={form.coins}
+                    onChange={handleChange}
+                    className="w-full"
+                  />
+                </div>
 
-          <label
-            style={{
-              display: "block",
-              marginBottom: "0.5rem",
-              fontWeight: 600,
-              color: "#003366",
-            }}
-          >
-            Instituição
-          </label>
-          <select
-            name="instituitionId"
-            value={form.instituitionId}
-            onChange={handleChange}
-            style={{
-              width: "100%",
-              padding: "10px",
-              marginBottom: "1rem",
-              borderRadius: "5px",
-              border: "1px solid #ccc",
-            }}
-            required
-          >
-            <option value={1}>PUC Minas</option>
-            <option value={2}>CEFET-MG</option>
-            <option value={3}>UFMG</option>
-          </select>
+                {/* Instituição */}
+                <div>
+                  <Label htmlFor="instituitionId" className="block mb-1">
+                    Instituição
+                  </Label>
+                  <Select
+                    value={String(form.instituitionId)}
+                    onValueChange={(value) =>
+                      setForm((prev) => ({ ...prev, instituitionId: Number(value) }))
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione a instituição" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">PUC Minas</SelectItem>
+                      <SelectItem value="2">CEFET-MG</SelectItem>
+                      <SelectItem value="3">UFMG</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-          <button
-            type="submit"
-            style={{
-              width: "100%",
-              padding: "10px",
-              backgroundColor: "#003366",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-          >
-            Salvar Alterações
-          </button>
+              {/* Botão */}
+              <div className="flex justify-end gap-2 mt-6">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push("/Aluno/list")}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Salvar Alterações
+                </Button>
+              </div>
 
-          {successMessage && (
-            <p
-              style={{
-                marginTop: "1rem",
-                textAlign: "center",
-                color: "green",
-                fontWeight: "bold",
-              }}
-            >
-              {successMessage}
-            </p>
-          )}
-        </form>
+              {/* Mensagem de sucesso */}
+              {successMessage && (
+                <p className="text-green-600 font-semibold text-center mt-4">
+                  {successMessage}
+                </p>
+              )}
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </>
   );
