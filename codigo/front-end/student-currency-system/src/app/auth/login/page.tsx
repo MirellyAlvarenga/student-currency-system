@@ -87,7 +87,7 @@ export default function LoginPage() {
             Não tem uma conta?{" "}
             <span
               className="text-green-400 hover:underline cursor-pointer"
-              onClick={() => router.push("auth/register")}
+              onClick={() => router.push("/auth/register")}
             >
               Criar conta
             </span>

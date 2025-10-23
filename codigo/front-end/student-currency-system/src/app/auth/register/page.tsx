@@ -63,7 +63,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-neutral-900 text-white">
+    <div className="flex w-full items-center justify-center bg-neutral-900 text-white">
       <div className="w-full max-w-lg rounded-2xl bg-neutral-800 p-8 shadow-2xl">
         <div className="flex items-center justify-center gap-2 mb-6">
           {accountType === "COMPANY" ? <Briefcase size={28} /> : <User size={28} />}
@@ -72,7 +72,6 @@ export default function RegisterPage() {
           </h1>
         </div>
 
-        {/* Toggle Aluno / Empresa */}
         <div className="flex gap-4 mb-4 justify-center">
           <button
             type="button"
@@ -114,7 +113,7 @@ export default function RegisterPage() {
                 name="name"
                 type="text"
                 className="w-full bg-transparent outline-none text-sm text-white placeholder-gray-400"
-                placeholder="Seu nome ou nome da empresa"
+                placeholder="Seu nome"
                 value={form.name}
                 onChange={handleChange}
               />
@@ -136,7 +135,6 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Campos apenas para estudante */}
           {accountType === "STUDENT" && (
             <>
               <div className="grid grid-cols-2 gap-4">
@@ -251,7 +249,7 @@ export default function RegisterPage() {
             Já possui conta?{" "}
             <span
               className="text-blue-400 hover:underline cursor-pointer"
-              onClick={() => router.push("auth/login")}
+              onClick={() => router.push("/auth/login")}
             >
               Entrar
             </span>
