@@ -37,6 +37,6 @@ public class StudentService {
     }
 
     public Student findByLogin(String login) {
-        return studentRepository.findByLogin(login);
+        return studentRepository.findByLogin(login).orElse(null);
     }
 }

@@ -1,5 +1,7 @@
 package student.currency.security;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
@@ -30,14 +32,18 @@ public class CustomUserDetailsService implements UserDetailsService {
                     .roles("PROFESSOR")
                     .build();
         }
-        Student student = studentRepository.findByLogin(username);
-        if (student != null) {
+        Optional<Student> optionalStudent = studentRepository.findByLogin(username);
+
+        if (optionalStudent.isPresent()) {
+            Student student = optionalStudent.get();
+
             return User.builder()
                     .username(student.getLogin())
                     .password(student.getPassword())
                     .roles("STUDENT")
                     .build();
         }
+        
         Company company = companyRepository.findByLogin(username);
         if (company != null) {
             return User.builder()

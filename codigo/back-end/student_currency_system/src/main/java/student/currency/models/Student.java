@@ -36,7 +36,6 @@ public class Student {
   @Column(nullable = false)
   private String course;
 
-  @Column(nullable = false)
   private Integer coins = 0;
 
   @ManyToOne

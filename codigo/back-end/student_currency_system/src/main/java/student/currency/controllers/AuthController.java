@@ -1,6 +1,7 @@
 package student.currency.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,7 +22,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody AuthRequest request) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getLogin(), request.getPassword()));
@@ -37,7 +38,7 @@ public class AuthController {
                 response.put("message", "Login successful");
                 response.put("login", userDetails.getUsername());
                 response.put("role", role.replace("ROLE_", ""));
-                return response;
+                return ResponseEntity.ok(response);
             } else {
                 throw new BadCredentialsException("Invalid login or password");
             }
