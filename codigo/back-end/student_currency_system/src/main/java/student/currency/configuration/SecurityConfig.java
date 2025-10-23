@@ -31,11 +31,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/professors").permitAll()
-                        .requestMatchers("/professors/**").hasRole("PROFESSOR")
+
                         .requestMatchers(HttpMethod.POST, "/students").permitAll()
-                        .requestMatchers("/students/**").hasRole("STUDENT")
+
                         .requestMatchers(HttpMethod.POST, "/companies").permitAll()
-                        .requestMatchers("/companies/**").hasRole("COMPANY")
+
                         .anyRequest().permitAll())
                 .formLogin(form -> form.permitAll());
 
