@@ -63,7 +63,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex w-full items-center justify-center bg-neutral-900 text-white">
+    <div className="flex flex-col min-h-screen items-center justify-center bg-neutral-900 text-white px-4 py-8">
       <div className="w-full max-w-lg rounded-2xl bg-neutral-800 p-8 shadow-2xl">
         <div className="flex items-center justify-center gap-2 mb-6">
           {accountType === "COMPANY" ? <Briefcase size={28} /> : <User size={28} />}
@@ -72,7 +72,7 @@ export default function RegisterPage() {
           </h1>
         </div>
 
-        <div className="flex gap-4 mb-4 justify-center">
+        <div className="flex gap-4 mb-4 justify-center w-full h-full">
           <button
             type="button"
             className={`px-4 py-2 rounded-lg ${accountType === "STUDENT" ? "bg-green-600" : "bg-neutral-700"}`}
