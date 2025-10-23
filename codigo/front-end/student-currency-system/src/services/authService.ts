@@ -16,13 +16,21 @@ export const authService = {
     return data;
   },
 
+  registerCompany: async (formData: any) => {
+    const { data } = await api.post("/companies", formData);
+    return data;
+  },
+
   logout: () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("role");
+    localStorage.removeItem("login");
   },
 
   getUser: () => {
     const user = localStorage.getItem("user");
     return user ? JSON.parse(user) : null;
   },
+
   getRole: () => localStorage.getItem("role"),
 };

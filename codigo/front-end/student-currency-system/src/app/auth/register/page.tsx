@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/authService";
-import { User, Mail, FileText, Home, Building2, BookOpen, Lock } from "lucide-react";
+import { User, Mail, FileText, Home, Building2, BookOpen, Lock, Briefcase } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [accountType, setAccountType] = useState<"STUDENT" | "COMPANY">("STUDENT");
   const [form, setForm] = useState({
     login: "",
     password: "",
@@ -16,12 +17,11 @@ export default function RegisterPage() {
     rg: "",
     address: "",
     course: "",
-    instituitionId: "", // enviamos o id da instituição
+    instituitionId: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Simulando instituições já cadastradas
   const instituicoes = [
     { id: 1, name: "PUC Minas" },
     { id: 2, name: "UFMG" },
@@ -40,11 +40,21 @@ export default function RegisterPage() {
     setError("");
 
     try {
-      await authService.register({
-        ...form,
-        instituition: { id: form.instituitionId } // backend espera objeto Instituition
-      });
-      router.push("/login");
+      if (accountType === "COMPANY") {
+        await authService.registerCompany({
+          login: form.login,
+          password: form.password,
+          name: form.name,
+          email: form.email,
+          role: "COMPANY"
+        });
+      } else {
+        await authService.registerCompany({
+          ...form,
+          instituition: { id: form.instituitionId }
+        });
+      }
+      router.push("/auth/login");
     } catch {
       setError("Erro ao cadastrar. Tente novamente.");
     } finally {
@@ -56,12 +66,31 @@ export default function RegisterPage() {
     <div className="flex h-screen items-center justify-center bg-neutral-900 text-white">
       <div className="w-full max-w-lg rounded-2xl bg-neutral-800 p-8 shadow-2xl">
         <div className="flex items-center justify-center gap-2 mb-6">
-          <User size={28} />
-          <h1 className="text-2xl font-semibold">Cadastro de Estudante</h1>
+          {accountType === "COMPANY" ? <Briefcase size={28} /> : <User size={28} />}
+          <h1 className="text-2xl font-semibold">
+            Cadastro de {accountType === "COMPANY" ? "Empresa" : "Estudante"}
+          </h1>
+        </div>
+
+        {/* Toggle Aluno / Empresa */}
+        <div className="flex gap-4 mb-4 justify-center">
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-lg ${accountType === "STUDENT" ? "bg-green-600" : "bg-neutral-700"}`}
+            onClick={() => setAccountType("STUDENT")}
+          >
+            Estudante
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-lg ${accountType === "COMPANY" ? "bg-green-600" : "bg-neutral-700"}`}
+            onClick={() => setAccountType("COMPANY")}
+          >
+            Empresa
+          </button>
         </div>
 
         <form onSubmit={handleRegister} className="flex flex-col gap-4">
-          {/* Login */}
           <div>
             <label className="text-sm text-gray-300">Login</label>
             <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
@@ -77,23 +106,21 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Nome */}
           <div>
-            <label className="text-sm text-gray-300">Nome completo</label>
+            <label className="text-sm text-gray-300">Nome</label>
             <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
-              <User size={18} className="text-gray-400" />
+              {accountType === "COMPANY" ? <Briefcase size={18} className="text-gray-400" /> : <User size={18} className="text-gray-400" />}
               <input
                 name="name"
                 type="text"
                 className="w-full bg-transparent outline-none text-sm text-white placeholder-gray-400"
-                placeholder="Seu nome completo"
+                placeholder="Seu nome ou nome da empresa"
                 value={form.name}
                 onChange={handleChange}
               />
             </div>
           </div>
 
-          {/* Email */}
           <div>
             <label className="text-sm text-gray-300">Email</label>
             <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
@@ -109,92 +136,92 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* CPF / RG */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm text-gray-300">CPF</label>
-              <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
-                <FileText size={18} className="text-gray-400" />
-                <input
-                  name="cpf"
-                  type="text"
-                  className="w-full bg-transparent outline-none text-sm text-white placeholder-gray-400"
-                  placeholder="000.000.000-00"
-                  value={form.cpf}
-                  onChange={handleChange}
-                />
+          {/* Campos apenas para estudante */}
+          {accountType === "STUDENT" && (
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm text-gray-300">CPF</label>
+                  <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
+                    <FileText size={18} className="text-gray-400" />
+                    <input
+                      name="cpf"
+                      type="text"
+                      className="w-full bg-transparent outline-none text-sm text-white placeholder-gray-400"
+                      placeholder="000.000.000-00"
+                      value={form.cpf}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-300">RG</label>
+                  <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
+                    <FileText size={18} className="text-gray-400" />
+                    <input
+                      name="rg"
+                      type="text"
+                      className="w-full bg-transparent outline-none text-sm text-white placeholder-gray-400"
+                      placeholder="00.000.000-0"
+                      value={form.rg}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-            <div>
-              <label className="text-sm text-gray-300">RG</label>
-              <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
-                <FileText size={18} className="text-gray-400" />
-                <input
-                  name="rg"
-                  type="text"
-                  className="w-full bg-transparent outline-none text-sm text-white placeholder-gray-400"
-                  placeholder="00.000.000-0"
-                  value={form.rg}
-                  onChange={handleChange}
-                />
+
+              <div>
+                <label className="text-sm text-gray-300">Endereço</label>
+                <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
+                  <Home size={18} className="text-gray-400" />
+                  <input
+                    name="address"
+                    type="text"
+                    className="w-full bg-transparent outline-none text-sm text-white placeholder-gray-400"
+                    placeholder="Rua, número, bairro, cidade"
+                    value={form.address}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Endereço */}
-          <div>
-            <label className="text-sm text-gray-300">Endereço</label>
-            <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
-              <Home size={18} className="text-gray-400" />
-              <input
-                name="address"
-                type="text"
-                className="w-full bg-transparent outline-none text-sm text-white placeholder-gray-400"
-                placeholder="Rua, número, bairro, cidade"
-                value={form.address}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+              <div>
+                <label className="text-sm text-gray-300">Curso</label>
+                <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
+                  <BookOpen size={18} className="text-gray-400" />
+                  <input
+                    name="course"
+                    type="text"
+                    className="w-full bg-transparent outline-none text-sm text-white placeholder-gray-400"
+                    placeholder="Ex: Engenharia de Software"
+                    value={form.course}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
 
-          {/* Curso */}
-          <div>
-            <label className="text-sm text-gray-300">Curso</label>
-            <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
-              <BookOpen size={18} className="text-gray-400" />
-              <input
-                name="course"
-                type="text"
-                className="w-full bg-transparent outline-none text-sm text-white placeholder-gray-400"
-                placeholder="Ex: Engenharia de Software"
-                value={form.course}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+              <div>
+                <label className="text-sm text-gray-300">Instituição de Ensino</label>
+                <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
+                  <Building2 size={18} className="text-gray-400" />
+                  <select
+                    name="instituitionId"
+                    className="w-full bg-transparent outline-none text-sm text-white"
+                    value={form.instituitionId}
+                    onChange={handleChange}
+                  >
+                    <option value="">Selecione uma instituição</option>
+                    {instituicoes.map((inst) => (
+                      <option key={inst.id} value={inst.id} className="text-black">
+                        {inst.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </>
+          )}
 
-          {/* Instituição */}
-          <div>
-            <label className="text-sm text-gray-300">Instituição de Ensino</label>
-            <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
-              <Building2 size={18} className="text-gray-400" />
-              <select
-                name="instituitionId"
-                className="w-full bg-transparent outline-none text-sm text-white"
-                value={form.instituitionId}
-                onChange={handleChange}
-              >
-                <option value="">Selecione uma instituição</option>
-                {instituicoes.map((inst) => (
-                  <option key={inst.id} value={inst.id} className="text-black">
-                    {inst.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Senha */}
           <div>
             <label className="text-sm text-gray-300">Senha</label>
             <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
