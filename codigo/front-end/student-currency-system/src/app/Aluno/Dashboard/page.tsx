@@ -6,8 +6,10 @@ import { motion } from "framer-motion";
 import { fadeUp, staggerContainer } from "../../../components/motionVariants";
 import CommonCard from "../../../components/commonCard";
 import { student as studentMock } from "../../../utils/mockData";
-import { Coins, List, Bell, Gift, PiggyBank } from "lucide-react";
+import { Coins, List, Bell, Gift, PiggyBank, LogOut } from "lucide-react";
 import { format } from "date-fns";
+import { authService } from "@/services/authService";
+import { useRouter } from "next/navigation";
 
 export default function StudentDashboard() {
   const [student, setStudent] = useState(() => ({
@@ -20,6 +22,13 @@ export default function StudentDashboard() {
 
   const [loading, setLoading] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
+  const user = authService.getUser();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    authService.logout();
+    router.push("/auth/login");
+  };
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -46,7 +55,7 @@ export default function StudentDashboard() {
       {/* Cabeçalho */}
       <motion.header variants={fadeUp} className="flex items-center justify-between relative">
         <div>
-          <h1 className="text-3xl font-bold">Olá, {loading ? "..." : student.name}</h1>
+          <h1 className="text-3xl font-bold">Olá, {loading ? "..." : user.login}</h1>
           <p className="text-sm text-gray-500">Bem-vindo ao seu painel de moedas</p>
         </div>
 
@@ -97,6 +106,13 @@ export default function StudentDashboard() {
               <Gift size={16} /> Trocar moedas
             </button>
           </Link>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition flex items-center gap-2"
+            aria-label="Sair da conta"
+          >
+            <LogOut size={16} /> Sair
+          </button>
         </div>
       </motion.header>
 

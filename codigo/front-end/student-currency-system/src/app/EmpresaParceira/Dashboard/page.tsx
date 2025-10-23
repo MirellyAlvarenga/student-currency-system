@@ -6,13 +6,22 @@ import CommonCard from "../../../components/commonCard";
 import { partner as partnerMock } from "../../../utils/mockData";
 import { fadeUp, staggerContainer } from "../../../components/motionVariants";
 import { motion } from "framer-motion";
-import { Bell, Gift, Repeat } from "lucide-react";
+import { Bell, Gift, LogOut, Repeat } from "lucide-react";
 import { format } from "date-fns";
+import { authService } from "@/services/authService";
+import { useRouter } from "next/navigation";
 
 export default function PartnerDashboard() {
   const [partner, setPartner] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
+  const user = authService.getUser();
+  const router = useRouter();
+  
+    const handleLogout = () => {
+      authService.logout();
+      router.push("/auth/login");
+    };
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -39,7 +48,7 @@ export default function PartnerDashboard() {
       {/* Header */}
       <motion.header variants={fadeUp} className="flex items-center justify-between relative">
         <div>
-          <h1 className="text-3xl font-bold">{loading ? "..." : partner?.name}</h1>
+          <h1 className="text-3xl font-bold">{loading ? "..." : user.login}</h1>
           <p className="text-sm text-gray-500">Painel da empresa parceira</p>
         </div>
 
@@ -79,6 +88,7 @@ export default function PartnerDashboard() {
                 <div className="text-center text-xs text-gray-500 py-2 bg-gray-50 cursor-pointer hover:text-blue-600">
                   Ver todas
                 </div>
+                
               </motion.div>
             )}
           </div>
@@ -87,6 +97,13 @@ export default function PartnerDashboard() {
           <Link href="/EmpresaParceira/CadastrarVantagem" className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition">
             Cadastrar Vantagem
           </Link>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition flex items-center gap-2"
+            aria-label="Sair da conta"
+          >
+            <LogOut size={16} /> Sair
+          </button>
         </div>
       </motion.header>
 
