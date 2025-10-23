@@ -7,7 +7,7 @@ import { LogIn, Mail, Lock } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -18,10 +18,19 @@ export default function LoginPage() {
     setError("");
 
     try {
-      await authService.login(email, password);
-      router.push("/dashboard");
+      const user = await authService.login(login, password);
+
+      if (user.role === "STUDENT") {
+        router.push("/Aluno/Dashboard");
+      } else if (user.role === "PROFESSOR") {
+        router.push("/Professor/Dashboard");
+      } else if (user.role === "COMPANY") {
+        router.push("/EmpresaParceira/Dashboard");
+      } else {
+        router.push("/dashboard");
+      }
     } catch {
-      setError("Email ou senha incorretos.");
+      setError("Login ou senha incorretos.");
     } finally {
       setLoading(false);
     }
@@ -37,15 +46,15 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <div>
-            <label className="text-sm text-gray-300">Email</label>
+            <label className="text-sm text-gray-300">Login</label>
             <div className="flex items-center gap-2 rounded-lg bg-neutral-700 px-3 py-2">
               <Mail size={18} className="text-gray-400" />
               <input
-                type="email"
+                type="text"
                 className="w-full bg-transparent outline-none text-sm text-white placeholder-gray-400"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Digite seu login"
+                value={login}
+                onChange={(e) => setLogin(e.target.value)}
               />
             </div>
           </div>
@@ -73,6 +82,16 @@ export default function LoginPage() {
           >
             {loading ? "Entrando..." : "Entrar"}
           </button>
+
+          <p className="text-sm text-gray-400 text-center mt-2">
+            Não tem uma conta?{" "}
+            <span
+              className="text-green-400 hover:underline cursor-pointer"
+              onClick={() => router.push("auth/register")}
+            >
+              Criar conta
+            </span>
+          </p>
         </form>
       </div>
     </div>
