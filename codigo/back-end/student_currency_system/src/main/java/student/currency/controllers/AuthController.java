@@ -41,12 +41,7 @@ public class AuthController {
     @PostMapping("/login/student")
     public ResponseEntity<StudentLoginResponseDTO> loginStudent(@RequestBody AuthRequestDTO request) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getLogin(), request.getPassword()));
-
-            if (!authentication.isAuthenticated()) {
-                throw new BadCredentialsException("Credenciais inválidas");
-            }
+            performAuthentication(request.getLogin(), request.getPassword());
 
             Student student = studentService.findByLogin(request.getLogin());
 
@@ -75,12 +70,7 @@ public class AuthController {
     @PostMapping("/login/professor")
     public ResponseEntity<ProfessorLoginResponseDTO> loginProfessor(@RequestBody AuthRequestDTO request) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getLogin(), request.getPassword()));
-
-            if (!authentication.isAuthenticated()) {
-                throw new BadCredentialsException("Credenciais inválidas");
-            }
+            performAuthentication(request.getLogin(), request.getPassword());
 
             Professor professor = professorService.findByLogin(request.getLogin());
 
@@ -107,12 +97,7 @@ public class AuthController {
     @PostMapping("/login/company")
     public ResponseEntity<CompanyLoginResponseDTO> loginCompany(@RequestBody AuthRequestDTO request) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getLogin(), request.getPassword()));
-
-            if (!authentication.isAuthenticated()) {
-                throw new BadCredentialsException("Credenciais inválidas");
-            }
+            performAuthentication(request.getLogin(), request.getPassword());
 
             Company company = companyService.findByLogin(request.getLogin());
 
@@ -138,12 +123,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> loginGeneric(@RequestBody AuthRequestDTO request) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getLogin(), request.getPassword()));
-
-            if (!authentication.isAuthenticated()) {
-                throw new BadCredentialsException("Credenciais inválidas");
-            }
+            performAuthentication(request.getLogin(), request.getPassword());
 
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Login realizado com sucesso");
@@ -185,3 +165,12 @@ public class AuthController {
         }
     }
 }
+
+    private void performAuthentication(String login, String password) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(login, password));
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new BadCredentialsException("Credenciais inválidas");
+        }
+    }
