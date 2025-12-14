@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import api from "@/services/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -25,13 +26,14 @@ export default function CadastrarVantagem() {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
 
     if (user?.login) {
-      fetch("http://localhost:8080/companies")
-        .then((res) => res.json())
-        .then((data) => {
+      api
+        .get("/companies")
+        .then((res) => {
+          const data = res.data;
           const comp = data.find((c: any) => c.login === user.login);
           if (comp) setSelectedCompany(comp);
         })
-        .catch((err) => console.error("Erro ao buscar professor:", err));
+        .catch((err) => console.error("Erro ao buscar empresa:", err));
     }
   }, []);
 
@@ -43,21 +45,17 @@ export default function CadastrarVantagem() {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8080/advantages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          companyId: selectedCompany.id,
-          name: nome,
-          description: descricao,
-          cost: custo,
-          quantity: quantidade,
-          picture: foto,
-          isActive: true
-        }),
+      const response = await api.post("/advantages", {
+        companyId: selectedCompany.id,
+        name: nome,
+        description: descricao,
+        cost: custo,
+        quantity: quantidade,
+        picture: foto,
+        isActive: true,
       });
 
-      if (response.ok) {
+      if (response.status >= 200 && response.status < 300) {
         alert("✅ Vantagem cadastrada com sucesso!");
       }
 

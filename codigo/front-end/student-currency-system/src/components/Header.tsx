@@ -9,6 +9,20 @@ const poppins = Poppins({
   subsets: ["latin"],
 });
 
+const navLinks = [
+  { href: "/", label: "Dashboard", match: "/" },
+  { href: "/Aluno/list", label: "Alunos", match: "/Aluno" },
+  { href: "/EmpresaParceira/list", label: "Empresas", match: "/EmpresaParceira" },
+];
+
+function NavLink({ href, label, active }: { href: string; label: string; active: boolean }) {
+  return (
+    <Link href={href} className={`hover:underline ${active ? "font-bold underline" : ""}`}>
+      {label}
+    </Link>
+  );
+}
+
 export default function Header() {
   const pathname = usePathname();
 
@@ -30,31 +44,10 @@ export default function Header() {
           Sistema monetário
         </Link>
 
-        <nav className="flex gap-6">
-          <Link
-            href="/"
-            className={`hover:underline ${
-              pathname === "/" ? "font-bold underline" : ""
-            }`}
-          >
-            Dashboard
-          </Link>
-          <Link
-            href="/Aluno/list"
-            className={`hover:underline ${
-              pathname === "/Aluno" ? "font-bold underline" : ""
-            }`}
-          >
-            Alunos
-          </Link>
-          <Link
-            href="/EmpresaParceira/list"
-            className={`hover:underline ${
-              pathname === "/cliente/list" ? "font-bold underline" : ""
-            }`}
-          >
-            Empresas
-          </Link>
+        <nav className="flex gap-6" aria-label="Main navigation">
+          {navLinks.map((link) => (
+            <NavLink key={link.href} href={link.href} label={link.label} active={pathname?.startsWith(link.match) ?? false} />
+          ))}
         </nav>
       </div>
     </header>
